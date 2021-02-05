@@ -55,17 +55,42 @@ function show {
     esac
 }
 
-function usage()
+function diff {
+    shift;
+    NAME=$1
+    VERSION=${2:-staging}
+    STAGING_PATH=spaces/$BUCKET/datasets/$1/$VERSION
+    PUBLISH_PATH=spaces/$BUCKET/datasets/$1/production
+    for INFO in $(mc ls --recursive --json $STAGING_PATH)
+    do
+        KEY=$(echo $INFO | jq -r '.key')
+        stg_etag=$(mc stat --json $STAGING_PATH/$KEY | jq -r '.etag')            
+        prod_etag=$(mc stat --json $PUBLISH_PATH/$KEY | jq -r '.etag')
+        if [ $stg_etag != $prod_etag ]
+        then true
+        else false
+        fi
+    done
+}
+
+function different {
+    if diff $@ 
+    then echo 'different' 
+    fi
+}
+
+function usage
 {
     echo
     echo "Usage:"
-    echo "./run.sh [install, show, publish, delete]"
+    echo "./run.sh [install, show, publish, delete, diff]"
     echo
     echo "Commands:"
     echo "   install:   Install minio and configure host -- spaces"
     echo "   show:      show available versions and files e.g. ./run.sh show <dataset> --production|--staging"
     echo "   publish:   publish a given dataset from a given candidate version (default candidate is \"staging\")"
     echo "   delete:    deleting a version, by default production and staging cannot be deleted"
+    echo "   diff:      detecting if any file difference between production and staging. e.g. ./run.sh diff <dataset>"
     echo
 }
 
@@ -74,5 +99,6 @@ case $1 in
     show) show $@ ;;
     publish) publish $@ ;;
     delete) delete $@ ;;
+    diff) different $@ ;;
     *) usage;;
 esac
