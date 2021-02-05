@@ -14,7 +14,7 @@ set_env .env
 BUCKET=$AWS_S3_BUCKET
 
 # Setup: Download and Install minio
-function Setup {
+function install {
     curl -O https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2020-10-03T02-54-56Z
     mv mc.RELEASE.2020-10-03T02-54-56Z mc
     chmod +x mc
@@ -51,13 +51,28 @@ function show {
     case $2 in 
         --production|-p) mc ls --recursive spaces/$BUCKET/datasets/$1/production;;
         --staging|-s) mc ls --recursive spaces/$BUCKET/datasets/$1/staging;;
-        *) printf "\033[0;31mplease specify flag --production (-p) or --staging (-s)\n\033[0;31m"
+        *) mc ls spaces/$BUCKET/datasets/$1/
     esac
 }
 
+function usage()
+{
+    echo
+    echo "Usage:"
+    echo "./run.sh [install, show, publish, delete]"
+    echo
+    echo "Commands:"
+    echo "   install:   Install minio and configure host -- spaces"
+    echo "   show:      show available versions and files e.g. ./run.sh show <dataset> --production|--staging"
+    echo "   publish:   publish a given dataset from a given candidate version (default candidate is \"staging\")"
+    echo "   delete:    deleting a version, by default production and staging cannot be deleted"
+    echo
+}
+
 case $1 in
+    install) install;;
     show) show $@ ;;
     publish) publish $@ ;;
     delete) delete $@ ;;
-    *) echo "unknow command $1";;
+    *) usage;;
 esac
