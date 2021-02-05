@@ -64,7 +64,6 @@ function diff {
     for INFO in $(mc ls --recursive --json $STAGING_PATH)
     do
         KEY=$(echo $INFO | jq -r '.key')
-        EXT="${KEY#*.}"
         stg_etag=$(mc stat --json $STAGING_PATH/$KEY | jq -r '.etag')            
         prod_etag=$(mc stat --json $PUBLISH_PATH/$KEY | jq -r '.etag')
         if [ $stg_etag != $prod_etag ]
