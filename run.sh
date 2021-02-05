@@ -67,7 +67,7 @@ function compare {
         return 0 
     else
         # Files are different, needs review
-        return 0
+        return 1
     fi
 }
 
