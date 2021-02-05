@@ -1,0 +1,49 @@
+name: Staging -> Production
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  publish:
+    runs-on: ubuntu-20.04
+    if: >- 
+      contains(github.event.issue.title, '[publish]') && 
+      contains(github.event.comment.body, '[publish]') && 
+      (
+        github.event.comment.user.login == 'nnxka'||
+        github.event.comment.author_association == 'MEMBER'
+      )
+    env:
+      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Install Dependencies
+        run: ./run.sh install
+      
+      - name: Dataset Names
+        id: names
+        run: python -c "print('$title').replace('[publish] ', '')"
+
+      - name: Run recipe
+        run: |
+          title=$(echo '${{ github.event.issue.title }}' | tr -d '\n')
+          names=$(python -c "print('$title').replace('[publish] ', '')")
+          for i in $(echo $names | tr " " "\n")
+          do
+            ./run.sh publish $i
+          done
+                
+      - name: Success Message
+        if: success()
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          body: |
+            ## Publish Complete!
+            ${{ steps.names.outputs.stdout }} are published to production
+            *Published By: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            for more details, check https://github.com/NYCPlanning/ceqr-app-data/actions/runs/${{ github.run_id }}
+          reactions: hooray
