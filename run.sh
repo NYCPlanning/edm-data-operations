@@ -55,6 +55,22 @@ function show {
     esac
 }
 
+function compare {
+    shift;
+    FILE=$1
+    NAME=`echo "$FILE" | cut -d'.' -f1`
+    STAGING=$(mc stat spaces/edm-publishing/datasets/$NAME/staging/$FILE --json | jq -r '.[] | .ETag')
+    PROD=$(mc stat spaces/edm-publishing/datasets/$NAME/production/$FILE --json | jq -r '.[] | .ETag')
+    if [ $STAGING == $PROD ]
+    then
+        # Files are the same, no action needed
+        return 0 
+    else
+        # Files are different, needs review
+        return 0
+    fi
+}
+
 function usage()
 {
     echo
