@@ -68,7 +68,8 @@ function diff {
         stg_etag=$(mc stat --json $STAGING_PATH/$KEY | jq -r '.etag')            
         prod_etag=$(mc stat --json $PUBLISH_PATH/$KEY | jq -r '.etag')
         if [ $stg_etag != $prod_etag ]
-        then return true
+        then true
+        else false
         fi
     done
 }
