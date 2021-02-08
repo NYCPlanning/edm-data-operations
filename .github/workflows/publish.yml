@@ -44,6 +44,6 @@ jobs:
           body: |
             ## Publish Complete!
             ${{ steps.names.outputs.stdout }} are published to production
-            *Published By: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            *Published By: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*;
             for more details, check https://github.com/NYCPlanning/ceqr-app-data/actions/runs/${{ github.run_id }}
           reactions: hooray
