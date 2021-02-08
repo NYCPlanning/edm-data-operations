@@ -35,9 +35,7 @@ jobs:
           start = splited.index("```yml")+1
           end = splited.index("```")
           datasets=' '.join([i[2:] for i in splited[start:end]])
-          datasets_markdown="""```yml\n{0}\n```""".format("\n".join([i for i in splited[start:end]]))
           os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
-          os.system('echo "::set-output name=datasets_markdown::{0}"'.format(datasets_markdown))
                   
       - name: test output
         run: echo "${{ steps.parsing.outputs.datasets }}"
@@ -56,7 +54,8 @@ jobs:
           comment-id: ${{ github.event.comment.id }}
           body: |
             ## Publish Complete!
-            ${{ steps.parsing.outputs.datasets_markdown }}
-            *Published By: @${{ github.actor }}*;
-            for more details, check https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }}
+            
+            ${{ steps.parsing.outputs.datasets }}
+            
+            *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
           reactions: hooray
