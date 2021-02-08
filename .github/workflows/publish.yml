@@ -24,7 +24,7 @@ jobs:
       - name: Install Dependencies
         run: ./run.sh install
       
-      - name: Run a one-line script
+      - name: Parse dataset names
         shell: python
         id: parsing
         run: |
