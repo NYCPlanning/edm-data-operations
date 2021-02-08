@@ -25,8 +25,10 @@ jobs:
       
       - name: Dataset Names
         id: names
-        run: python -c "print('${{ github.event.issue.title }}'.replace('[publish] ', ''))"
-
+        run: |
+          datasets=$(python -c "print(' '.join([row[2:] for row in '${{ github.event.issue.body }}'.split('\n') if len(row)>0 and row[0]=='-']))")
+          echo "$datasets"
+          
       - name: Run recipe
         run: |
           for i in $(echo ${{ steps.names.outputs.stdout }} | tr " " "\n")
