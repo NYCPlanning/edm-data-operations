@@ -35,7 +35,7 @@ jobs:
           start = splited.index("```yml")+1
           end = splited.index("```")
           datasets=' '.join([i[2:] for i in splited[start:end]])
-          datasets_markdown="```yml\n{0}\n```".format(datasets)
+          datasets_markdown="""```yml\n{0}\n```""".format("\n".join([i for i in splited[start:end]]))
           os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
           os.system('echo "::set-output name=datasets_markdown::{0}"'.format(datasets_markdown))
                   
