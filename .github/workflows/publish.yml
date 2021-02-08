@@ -25,13 +25,11 @@ jobs:
       
       - name: Dataset Names
         id: names
-        run: python -c "print('$title').replace('[publish] ', '')"
+        run: python -c "print('${{ github.event.issue.title }}').replace('[publish] ', '')"
 
       - name: Run recipe
         run: |
-          title=$(echo '${{ github.event.issue.title }}' | tr -d '\n')
-          names=$(python -c "print('$title').replace('[publish] ', '')")
-          for i in $(echo $names | tr " " "\n")
+          for i in $(echo ${{ steps.names.outputs.stdout }} | tr " " "\n")
           do
             ./run.sh publish $i
           done
