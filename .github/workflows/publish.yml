@@ -25,7 +25,7 @@ jobs:
       
       - name: Dataset Names
         id: names
-        run: python -c "print('${{ github.event.issue.title }}').replace('[publish] ', '')"
+        run: python -c "print('${{ github.event.issue.title }}'.replace('[publish] ', ''))"
 
       - name: Run recipe
         run: |
