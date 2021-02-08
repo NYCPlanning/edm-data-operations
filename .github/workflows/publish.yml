@@ -1,7 +1,7 @@
 name: Staging -> Production
 on:
   issue_comment:
-    types: [created]
+    types: [created, edited]
 
 jobs:
   publish:
@@ -35,7 +35,9 @@ jobs:
           start = splited.index("```yml")+1
           end = splited.index("```")
           datasets=' '.join([i[2:] for i in splited[start:end]])
+          datasets_markdown="```yml\n{0}\n```".format(datasets)
           os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
+          os.system('echo "::set-output name=datasets_markdown::{0}"'.format(datasets_markdown))
                   
       - name: test output
         run: echo "${{ steps.parsing.outputs.datasets }}"
@@ -54,8 +56,7 @@ jobs:
           comment-id: ${{ github.event.comment.id }}
           body: |
             ## Publish Complete!
-            ${{ github.event.issue.body }}
-            are published to production
-            *Published By: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*;
-            for more details, check https://github.com/NYCPlanning/ceqr-app-data/actions/runs/${{ github.run_id }}
+            ${{ steps.parsing.outputs.datasets_markdown }}
+            *Published By: @${{ github.actor }}*;
+            for more details, check https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }}
           reactions: hooray
