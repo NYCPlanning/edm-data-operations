@@ -23,15 +23,25 @@ jobs:
       - name: Install Dependencies
         run: ./run.sh install
       
-      - name: Dataset Names
-        id: names
+      - name: Run a one-line script
+        shell: python
+        id: parsing
         run: |
-          datasets=$(python -c "print(' '.join([row[2:] for row in '${{ toJSON(github.event.issue.body) }}'.split('\n') if len(row)>0 and row[0]=='-']))")
-          echo "$datasets"
+          import os
+          
+          body = """${{ github.event.issue.body }}"""
+          splited = body.split('\n')
+          start = splited.index("```yml")+1
+          end = splited.index("```")
+          datasets=' '.join([i[2:] for i in splited[start:end]])
+          os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
+                  
+      - name: test output
+        run: echo "${{ steps.parsing.outputs.datasets }}"
           
       - name: Run recipe
         run: |
-          for i in $(echo ${{ steps.names.outputs.stdout }} | tr " " "\n")
+          for i in ${{ steps.parsing.outputs.datasets }}
           do
             ./run.sh publish $i
           done
@@ -43,7 +53,8 @@ jobs:
           comment-id: ${{ github.event.comment.id }}
           body: |
             ## Publish Complete!
-            ${{ steps.names.outputs.stdout }} are published to production
+            ${{ github.event.issue.body }}
+            are published to production
             *Published By: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*;
             for more details, check https://github.com/NYCPlanning/ceqr-app-data/actions/runs/${{ github.run_id }}
           reactions: hooray
