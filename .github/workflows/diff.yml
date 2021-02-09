@@ -41,8 +41,8 @@ jobs:
     steps:
       - run: echo ${{ fromJSON(needs.diff.outputs.matrix) }}
       - run: echo ${{ needs.diff.outputs.matrix }}
-      - run: echo "${{ fromJSON(needs.diff.outputs.matrix) }}"
-      - run: echo "${{ needs.diff.outputs.matrix }}"
+      - run: printf "${{ fromJSON(needs.diff.outputs.matrix) }}"
+      - run: printf "${{ needs.diff.outputs.matrix }}"
 
   notify:
     runs-on: ubuntu-20.04
@@ -54,7 +54,7 @@ jobs:
       AWS_S3_BUCKET: edm-publishing
     strategy:
       matrix: 
-        dataset: ${{ fromJSON(needs.diff.outputs.matrix) }}
+        dataset: ${{ needs.diff.outputs.matrix }}
     steps:
        - uses: actions/checkout@v2
          
