@@ -10,6 +10,7 @@ jobs:
       AWS_S3_BUCKET: edm-publishing
     outputs: 
       matrix: ${{ steps.diff.outputs.matrix }}
+      matrix1: ${{ steps.diff.outputs.matrix1 }}
     steps:
       - uses: actions/checkout@v2
         
@@ -24,17 +25,23 @@ jobs:
           import os
           
           diff=os.popen('./run.sh diff_list').readlines()
-          diff=[d.replace('\n', '') for d in diff]
-          print(diff)
-          
+          diff=[d.replace('\n', '') for d in diff]          
           diff_json=json.dumps(diff)
-          diff_json=diff_json.replace('"', '\"')
+          
+          with open('datasets.json', 'w') as f:
+            json.dump(diff, f)
+            
           print(diff_json)
           
-          os.system('''echo "::set-output name=matrix::{0}"'''.format(diff_json))
+      - name: get stdout
+        run: |
+          echo ::set-output name=matrix::${{ steps.diff.outputs.stdout }}  
+          echo ::set-output name=matrix1::$(cat datasets.json)
           
       - name: Print Matrix
-        run: echo "${{ steps.diff.outputs.matrix }}"          
+        run: |
+          echo "${{ steps.diff.outputs.matrix }}"
+          echo "${{ steps.diff.outputs.matrix1 }}"
 
   test:
     needs: [diff]
@@ -44,6 +51,10 @@ jobs:
       - run: echo ${{ needs.diff.outputs.matrix }}
       - run: printf "${{ fromJSON(needs.diff.outputs.matrix) }}"
       - run: printf "${{ needs.diff.outputs.matrix }}"
+      - run: echo ${{ fromJSON(needs.diff.outputs.matrix1) }}
+      - run: echo ${{ needs.diff.outputs.matrix1 }}
+      - run: printf "${{ fromJSON(needs.diff.outputs.matrix1) }}"
+      - run: printf "${{ needs.diff.outputs.matrix1 }}"
 
   notify:
     runs-on: ubuntu-20.04
