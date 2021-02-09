@@ -13,8 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
-#       - name: Install Dependencies
-#         run: ./run.sh install
+      - name: Install Dependencies
+        run: ./run.sh install
       
       - name: Compute diff matrix
         id: diff 
@@ -22,8 +22,10 @@ jobs:
         run: |
           import json
           import os
+          import os
           
-          diff=['test', 'dcm_streetnamechanges_lines']
+          diff=os.popen('./run.sh diff_list').readlines()
+          diff=[d.replace('\n', '') for d in diff]
           diff_json=json.dumps(json.dumps(diff))
           os.system('''echo "::set-output name=matrix::{}"'''.format(diff_json))
           
@@ -31,16 +33,9 @@ jobs:
         run: |
           echo ${{ steps.diff.outputs.matrix }}
 
-  test:
-    needs: [diff]
-    runs-on: ubuntu-20.04
-    steps:
-      - run: echo ${{ fromJSON(needs.diff.outputs.matrix) }}
-      - run: echo ${{ needs.diff.outputs.matrix }}
-
   notify:
     runs-on: ubuntu-20.04
-    needs: [diff, test]
+    needs: [diff]
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
@@ -55,5 +50,22 @@ jobs:
        - name: Install Dependencies
          run: ./run.sh install
          
-       - name: Test diff
-         run: ./run.sh diff ${{ matrix.dataset }}
+       - name: Open Issues
+       - uses: nashmaniac/create-issue-action@v1.1
+         name: Create Issue to Publish
+         with:
+          title: |
+            [publish] ${{ matrix.dataset }}
+          token: ${{secrets.GITHUB_TOKEN}}
+          assignees: nnxka
+          labels: publish, ${{ matrix.dataset }}
+          body: |
+            ## Difference Detected Between `Production` and `Staging` in the following dataset(s)
+            ## Dataset(s)
+            ```yml
+            - ${{ matrix.dataset }}
+            ```
+            ## Next Steps: 
+            If you have manually checked above files and they seem to be ok, comment `[publish]` under this issue. 
+            This would allow github actions to move staging files to production. 
+            Feel free to close this issue once it's all complete. Thanks!
