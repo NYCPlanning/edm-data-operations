@@ -55,6 +55,13 @@ function show {
     esac
 }
 
+function list {
+    keys=$(mc ls --json spaces/$BUCKET/datasets | jq -r '.key')
+    for key in $keys
+    do echo ${key%"/"}
+    done
+}
+
 function diff {
     shift;
     NAME=$1
@@ -67,16 +74,32 @@ function diff {
         stg_etag=$(mc stat --json $STAGING_PATH/$KEY | jq -r '.etag')            
         prod_etag=$(mc stat --json $PUBLISH_PATH/$KEY | jq -r '.etag')
         if [ $stg_etag != $prod_etag ]
-        then true
-        else false
+        then 
+            status=true
+            status_verbose='true'
+            break
+        else 
+            status=false
+            status_verbose='false'
         fi
     done
 }
 
+
 function different {
-    if diff $@ 
-    then echo 'different' 
-    fi
+    diff $@
+    echo $status_verbose
+}
+
+function diff_list {
+    for key in $(list)
+    do
+        k=${key%"/"}
+        diff "" "$k"
+        if $status; 
+        then echo "$k"
+        fi
+    done
 }
 
 function usage
@@ -91,6 +114,8 @@ function usage
     echo "   publish:   publish a given dataset from a given candidate version (default candidate is \"staging\")"
     echo "   delete:    deleting a version, by default production and staging cannot be deleted"
     echo "   diff:      detecting if any file difference between production and staging. e.g. ./run.sh diff <dataset>"
+    echo "   diff_list: listing all dataset names that are out of sync"
+    echo "   list:      listing all dataset names"
     echo
 }
 
@@ -100,5 +125,7 @@ case $1 in
     publish) publish $@ ;;
     delete) delete $@ ;;
     diff) different $@ ;;
+    diff_list) diff_list;;
+    list) list;;
     *) usage;;
 esac
