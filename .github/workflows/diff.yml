@@ -13,28 +13,19 @@ jobs:
         
       - name: Install Dependencies
         run: ./run.sh install
-        
-      - name: Compute Diff
-        id: diff
-        run: |
-          diff=$(./run.sh diff_list)
-          diff="${diff//'%'/'%25'}"
-          diff="${diff//$'\n'/'%0A'}"
-          diff="${diff//$'\r'/'%0D'}"
-          echo "::set-output name=diff::$diff"
       
       - name: Compute diff matrix
-        id: matrix 
+        id: diff 
         shell: python
         run: |
           import json
           import os
           
-          diff="""${{ steps.diff.ouptuts.diff }}"""
-          diff_list=diff.split('\n')
-          diff_json=json.dumps(diff_list)
+          diff=os.popen('./run.sh diff_list').readlines()
+          diff=[d.replace('\n', '') for d in diff]
+          diff_json=json.dumps(diff)
           os.system('echo "::set-output name=matrix::{0}"'.format(diff_json))
           
       - name: Test Matrix
         id: test
-        run: echo "${{ steps.matrix.outputs.matrix }}"          
+        run: echo "${{ steps.diff.outputs.matrix }}"          
