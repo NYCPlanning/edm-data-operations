@@ -21,14 +21,11 @@ jobs:
         shell: python
         run: |
           import json
-          diff=['test', 'dcm_streetnamechanges_lines']        
-          with open('datasets.json', 'w') as f:
-            json.dump(diff, f)    
-                  
-      - name: Set matrix
-        run: |
-          datasets=$(cat datasets.json)
-          echo "::set-output name=matrix::$datasets"
+          import os
+          
+          diff=['test', 'dcm_streetnamechanges_lines']
+          diff_json=json.dumps(json.dumps(diff))
+          os.system('''echo "::set-output name=matrix::{}"'''.format(diff_json))
           
       - name: Print Matrix
         run: |
