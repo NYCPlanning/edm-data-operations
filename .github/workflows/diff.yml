@@ -29,3 +29,17 @@ jobs:
       - name: Test Matrix
         id: test
         run: echo "${{ steps.diff.outputs.matrix }}"          
+
+  issues:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix: 
+        dataset: ${{ jobs.steps.diff.outputs.matrix }}
+    steps:
+       - uses: actions/checkout@v2
+         
+       - name: Install Dependencies
+         run: ./run.sh install
+         
+       - name: Test diff
+         run: ./run.sh diff ${{ matrix.dataset }}
