@@ -30,14 +30,23 @@ jobs:
           diff_json=json.dumps(diff)
           print(diff_json)
           
-          os.system('''echo "::set-output name=matrix::{0}"'''.format(diff_json))
+          os.system('''echo "::set-output name=matrix::'{0}'"'''.format(diff_json))
           
       - name: Print Matrix
         run: echo "${{ steps.diff.outputs.matrix }}"          
 
-  issues:
-    runs-on: ubuntu-20.04
+  test:
     needs: [diff]
+    runs-on: ubuntu-20.04
+    steps:
+      - run: echo ${{ fromJSON(needs.diff.outputs.matrix) }}
+      - run: echo ${{ needs.diff.outputs.matrix }}
+      - run: echo "${{ fromJSON(needs.diff.outputs.matrix) }}"
+      - run: echo "${{ needs.diff.outputs.matrix }}"
+
+  notify:
+    runs-on: ubuntu-20.04
+    needs: [diff, test]
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
