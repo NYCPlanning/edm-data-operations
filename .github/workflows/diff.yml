@@ -13,31 +13,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         
-      - name: Install Dependencies
-        run: ./run.sh install
+#       - name: Install Dependencies
+#         run: ./run.sh install
       
       - name: Compute diff matrix
         id: diff 
         shell: python
         run: |
-          import json
-          import os
-          import sys
-          
-          diff=os.popen('./run.sh diff_list').readlines()
-          diff=[d.replace('\n', '') for d in diff]          
+          diff=['test', 'dcm_streetnamechanges_lines']        
           with open('datasets.json', 'w') as f:
             json.dump(diff, f)    
                   
       - name: Set matrix
         run: |
-          ls -l 
-          cat datasets.json
-          echo "::set-output name=matrix::$(cat datasets.json)"
+          echo ::set-output name=matrix::$(cat datasets.json)
           
       - name: Print Matrix
         run: |
-          echo "${{ steps.diff.outputs.matrix }}"
+          echo ${{ steps.diff.outputs.matrix }}
 
   test:
     needs: [diff]
@@ -45,8 +38,6 @@ jobs:
     steps:
       - run: echo ${{ fromJSON(needs.diff.outputs.matrix) }}
       - run: echo ${{ needs.diff.outputs.matrix }}
-      - run: printf "${{ fromJSON(needs.diff.outputs.matrix) }}"
-      - run: printf "${{ needs.diff.outputs.matrix }}"
 
   notify:
     runs-on: ubuntu-20.04
