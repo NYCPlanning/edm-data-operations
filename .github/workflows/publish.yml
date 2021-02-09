@@ -1,0 +1,61 @@
+name: Staging -> Production
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  publish:
+    runs-on: ubuntu-20.04
+    if: >- 
+      contains(github.event.issue.title, '[publish]') && 
+      contains(github.event.comment.body, '[publish]') && 
+      (
+        github.event.comment.user.login == 'nnxka'||
+        github.event.comment.author_association == 'MEMBER'
+      )
+    env:
+      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: edm-publishing
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Install Dependencies
+        run: ./run.sh install
+      
+      - name: Parse dataset names
+        shell: python
+        id: parsing
+        run: |
+          import os
+          
+          body = """${{ github.event.issue.body }}"""
+          splited = body.split('\n')
+          start = splited.index("```yml")+1
+          end = splited.index("```")
+          datasets=' '.join([i[2:] for i in splited[start:end]])
+          os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
+                  
+      - name: test output
+        run: echo "${{ steps.parsing.outputs.datasets }}"
+          
+      - name: Run recipe
+        run: |
+          for i in ${{ steps.parsing.outputs.datasets }}
+          do
+            ./run.sh publish $i
+          done
+                
+      - name: Success Message
+        if: success()
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          body: |
+            ## Publish Complete!
+            
+            ${{ steps.parsing.outputs.datasets }}
+            
+            *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
+          reactions: hooray
