@@ -20,6 +20,7 @@ jobs:
         id: diff 
         shell: python
         run: |
+          import json
           diff=['test', 'dcm_streetnamechanges_lines']        
           with open('datasets.json', 'w') as f:
             json.dump(diff, f)    
