@@ -28,9 +28,10 @@ jobs:
           print(diff)
           
           diff_json=json.dumps(diff)
+          diff_json=diff_json.replace('"', '\"')
           print(diff_json)
           
-          os.system('''echo "::set-output name=matrix::'{0}'"'''.format(diff_json))
+          os.system('''echo "::set-output name=matrix::{0}"'''.format(diff_json))
           
       - name: Print Matrix
         run: echo "${{ steps.diff.outputs.matrix }}"          
@@ -54,7 +55,7 @@ jobs:
       AWS_S3_BUCKET: edm-publishing
     strategy:
       matrix: 
-        dataset: ${{ needs.diff.outputs.matrix }}
+        dataset: ${{ fromJSON(needs.diff.outputs.matrix) }}
     steps:
        - uses: actions/checkout@v2
          
