@@ -40,7 +40,7 @@ jobs:
       AWS_S3_BUCKET: edm-publishing
     strategy:
       matrix: 
-        dataset: ${{ jobs.steps.diff.outputs.matrix }}
+        dataset: ${{ needs.diff.steps.diff.outputs.matrix }}
     steps:
        - uses: actions/checkout@v2
          
