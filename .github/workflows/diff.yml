@@ -8,6 +8,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
+    outputs: 
+      matrix: ${{ steps.diff.outputs.matrix }}
     steps:
       - uses: actions/checkout@v2
         
@@ -23,11 +25,14 @@ jobs:
           
           diff=os.popen('./run.sh diff_list').readlines()
           diff=[d.replace('\n', '') for d in diff]
-          diff_json=json.dumps(diff)
-          os.system('echo "::set-output name=matrix::{0}"'.format(diff_json))
+          print(diff)
           
-      - name: Test Matrix
-        id: test
+          diff_json=json.dumps(diff)
+          print(diff_json)
+          
+          os.system('''echo "::set-output name=matrix::{0}"'''.format(diff_json))
+          
+      - name: Print Matrix
         run: echo "${{ steps.diff.outputs.matrix }}"          
 
   issues:
@@ -40,7 +45,7 @@ jobs:
       AWS_S3_BUCKET: edm-publishing
     strategy:
       matrix: 
-        dataset: ${{ fromJSON(needs.diff.steps.diff.outputs.matrix) }}
+        dataset: ${{ fromJSON(needs.diff.outputs.matrix) }}
     steps:
        - uses: actions/checkout@v2
          
