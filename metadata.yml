@@ -1,0 +1,79 @@
+---
+- name: commercial_overlays
+  product:
+    - streets
+    - zola
+  info:
+    description: DCP Commericial Overlay Districts
+    de_name: dcp_commercialoverlay
+
+- name: condo
+  product: [streets, zola]
+
+- name: dcm
+  product: []
+
+- name: dcm_arterialsmajorstreets
+  product: []
+
+- name: dcm_citymapalterations
+  product: []
+
+- name: dcm_streetcenterline
+  product: []
+
+- name: dcm_streetnamechanges_areas
+  product: []
+
+- name: dcm_streetnamechanges_lines
+  product: []
+
+- name: dcm_streetnamechanges_points
+  product: []
+
+- name: dtm_block_centroids
+  product: []
+
+- name: e_designations
+  product:
+    - zola
+
+- name: facilities
+  product:
+    - streets
+
+- name: limited_height_districts
+  product:
+    - zola
+
+- name: mandatory_inclusionary_housing
+  product:
+    - zola
+    - streets
+
+- name: pops
+  product: []
+
+- name: dcm_streetnamechanges_lines
+  product: []
+
+- name: sidewalk_cafes
+  product:
+    - zola
+
+- name: special_purpose_districts
+  product:
+    - zola
+
+- name: special_purpose_subdistricts
+  product:
+    - zola
+
+- name: tax_lot_polygon
+  product: []
+
+- name: zoning_districts
+  product: []
+
+- name: zoning_map_amendments
+  product: []

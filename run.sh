@@ -20,6 +20,7 @@ function install {
     chmod +x mc
     sudo mv ./mc /usr/bin
     mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
+    python -m pip install PyYAML
 }
 
 function delete {
@@ -102,6 +103,16 @@ function diff_list {
     done
 }
 
+function convert {
+    shift;
+    if which python > /dev/null 2>&1;
+    then
+        python -m convert $1
+    else
+        python3 -m convert $1
+    fi
+}
+
 function usage
 {
     echo
@@ -116,6 +127,7 @@ function usage
     echo "   diff:      detecting if any file difference between production and staging. e.g. ./run.sh diff <dataset>"
     echo "   diff_list: listing all dataset names that are out of sync"
     echo "   list:      listing all dataset names"
+    echo "   convert:   convert given .yml file to .json file"
     echo
 }
 
@@ -127,5 +139,6 @@ case $1 in
     diff) different $@ ;;
     diff_list) diff_list;;
     list) list;;
+    convert) convert $@;;
     *) usage;;
 esac
