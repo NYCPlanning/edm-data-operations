@@ -23,6 +23,7 @@ jobs:
         run: |
           import json
           import os
+          import sys
           
           diff=os.popen('./run.sh diff_list').readlines()
           diff=[d.replace('\n', '') for d in diff]          
@@ -31,10 +32,11 @@ jobs:
           with open('datasets.json', 'w') as f:
             json.dump(diff, f)
             
-          print(diff_json)
+          print(diff_json, file = sys.stdout)
           
       - name: get stdout
         run: |
+          ls -l 
           echo ::set-output name=matrix::${{ steps.diff.outputs.stdout }}  
           echo ::set-output name=matrix1::$(cat datasets.json)
           
