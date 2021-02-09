@@ -15,7 +15,10 @@
         "product": [
             "streets",
             "zola"
-        ]
+        ],
+        "info": {
+            "de_name": "dof_condo"
+        }
     },
     {
         "name": "dcm",
@@ -53,13 +56,19 @@
         "name": "e_designations",
         "product": [
             "zola"
-        ]
+        ],
+        "info": {
+            "de_name": "dcp_edesignation"
+        }
     },
     {
         "name": "facilities",
         "product": [
             "streets"
-        ]
+        ],
+        "info": {
+            "de_name": "dcp_facilities"
+        }
     },
     {
         "name": "limited_height_districts",
@@ -72,11 +81,17 @@
         "product": [
             "zola",
             "streets"
-        ]
+        ],
+        "info": {
+            "de_name": "dcp_mih"
+        }
     },
     {
         "name": "pops",
-        "product": []
+        "product": [],
+        "info": {
+            "de_name": "dcp_pops"
+        }
     },
     {
         "name": "dcm_streetnamechanges_lines",
@@ -92,24 +107,39 @@
         "name": "special_purpose_districts",
         "product": [
             "zola"
-        ]
+        ],
+        "info": {
+            "de_name": "dcp_specialpurpose"
+        }
     },
     {
         "name": "special_purpose_subdistricts",
         "product": [
             "zola"
-        ]
+        ],
+        "info": {
+            "de_name": "dcp_specialpurposesubdistricts"
+        }
     },
     {
         "name": "tax_lot_polygon",
-        "product": []
+        "product": [],
+        "info": {
+            "de_name": "dof_dtm"
+        }
     },
     {
         "name": "zoning_districts",
-        "product": []
+        "product": [],
+        "info": {
+            "de_name": "dcp_zoningdistricts"
+        }
     },
     {
         "name": "zoning_map_amendments",
-        "product": []
+        "product": [],
+        "info": {
+            "de_name": "dcp_zoningmapamendments"
+        }
     }
 ]
