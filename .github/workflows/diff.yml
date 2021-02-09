@@ -32,6 +32,12 @@ jobs:
 
   issues:
     runs-on: ubuntu-20.04
+    needs: [diff]
+    env:
+      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: edm-publishing
     strategy:
       matrix: 
         dataset: ${{ jobs.steps.diff.outputs.matrix }}
