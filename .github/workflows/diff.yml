@@ -50,9 +50,8 @@ jobs:
        - name: Install Dependencies
          run: ./run.sh install
          
-       - name: Open Issues
-       - uses: nashmaniac/create-issue-action@v1.1
-         name: Create Issue to Publish
+       - name: Create Issue to Publish
+         uses: nashmaniac/create-issue-action@v1.1
          with:
           title: |
             [publish] ${{ matrix.dataset }}
