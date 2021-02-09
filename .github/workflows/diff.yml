@@ -1,0 +1,40 @@
+name: Check Diff Between Production and Staging
+on: [push]
+jobs:
+  diff:
+    runs-on: ubuntu-20.04
+    env:
+      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: edm-publishing
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: Install Dependencies
+        run: ./run.sh install
+        
+      - name: Compute Diff
+        id: diff
+        run: |
+          diff=$(./run.sh diff_list)
+          diff="${diff//'%'/'%25'}"
+          diff="${diff//$'\n'/'%0A'}"
+          diff="${diff//$'\r'/'%0D'}"
+          echo "::set-output name=diff::$diff"
+      
+      - name: Compute diff matrix
+        id: matrix 
+        shell: python
+        run: |
+          import json
+          import os
+          
+          diff="""${{ steps.diff.ouptuts.diff }}"""
+          diff_list=diff.split('\n')
+          diff_json=json.dumps(diff_list)
+          os.system('echo "::set-output name=matrix::{0}"'.format(diff_json))
+          
+      - name: Test Matrix
+        id: test
+        run: echo "${{ steps.matrix.outputs.matrix }}"          
