@@ -27,7 +27,8 @@ jobs:
                   
       - name: Set matrix
         run: |
-          echo ::set-output name=matrix::$(cat datasets.json)
+          datasets=$(cat datasets.json)
+          echo "::set-output name=matrix::$datasets"
           
       - name: Print Matrix
         run: |
