@@ -45,13 +45,25 @@ jobs:
       matrix: 
         dataset: ${{ fromJSON(needs.diff.outputs.matrix) }}
     steps:
+       - uses: nickderobertis/check-if-issue-exists-action@master
+         name: Check if Issue Exists
+         id: check_if_issue_exists
+         with:
+          repo: myuser/my-target-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: |
+            [publish] ${{ matrix.dataset }}
+            
        - uses: actions/checkout@v2
+         if: steps.check_if_issue_exists.outputs.exists == 'false'
          
        - name: Install Dependencies
+         if: steps.check_if_issue_exists.outputs.exists == 'false'
          run: ./run.sh install
          
        - name: Create Issue to Publish
          uses: nashmaniac/create-issue-action@v1.1
+         if: steps.check_if_issue_exists.outputs.exists == 'false'
          with:
           title: |
             [publish] ${{ matrix.dataset }}
