@@ -49,9 +49,9 @@ jobs:
                 
       - name: Success Message
         if: success()
-        uses: peter-evans/create-or-update-comment@v1
+        uses:  peter-evans/close-issue@v1
         with:
-          comment-id: ${{ github.event.comment.id }}
+          issue-number: ${{ github.event.issue.number }}
           body: |
             ## Publish Complete!
             
