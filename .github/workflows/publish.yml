@@ -52,10 +52,9 @@ jobs:
         uses:  peter-evans/close-issue@v1
         with:
           issue-number: ${{ github.event.issue.number }}
-          body: |
+          comment: |
             ## Publish Complete!
             
             ${{ steps.parsing.outputs.datasets }}
             
             *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
-          reactions: hooray
