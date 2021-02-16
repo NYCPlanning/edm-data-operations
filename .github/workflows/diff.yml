@@ -1,5 +1,7 @@
-name: Check Diff Between Production and Staging
-on: [push]
+name: Production Diff Staging
+on:
+  schedule:
+    - cron: "0 0 */2 * *"
 jobs:
   diff:
     runs-on: ubuntu-20.04
@@ -49,6 +51,9 @@ jobs:
          
        - name: Install Dependencies
          run: ./run.sh install
+       
+       - name: Random Sleep
+         run:  sleep $[ ( $RANDOM % 10 )  + 1 ]s
          
        - name: Create Issue to Publish
          uses: NYCPlanning/action-create-issue@master
