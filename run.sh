@@ -131,6 +131,13 @@ function usage
     echo
 }
 
+function server {
+    poetry install
+    export FLASK_APP=app/app.py
+    export FLASK_DEBUG=true
+    poetry run flask run
+}
+
 case $1 in
     install) install;;
     show) show $@ ;;
@@ -140,5 +147,6 @@ case $1 in
     diff_list) diff_list;;
     list) list;;
     convert) convert $@;;
+    server) server;;
     *) usage;;
 esac
