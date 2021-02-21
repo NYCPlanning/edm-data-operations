@@ -1,5 +1,6 @@
 name: Production Diff Staging
 on:
+  push:
   schedule:
     - cron: "0 0 */2 * *"
 jobs:
@@ -55,21 +56,28 @@ jobs:
        - name: Random Sleep
          run:  sleep $[ ( $RANDOM % 10 )  + 1 ]s
          
-       - name: Create Issue to Publish
-         uses: NYCPlanning/action-create-issue@master
-         with:
-          title: |
-            [publish] ${{ matrix.dataset }}
-          token: ${{secrets.GITHUB_TOKEN}}
-          assignees: nnxka
-          labels: publish, ${{ matrix.dataset }}
-          body: |
-            ## Difference Detected Between `Production` and `Staging` in the following dataset(s)
+       - uses: actions/github-script@v3
+         name: Create Issue to Publish
+         with: 
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = `[publish] ${{ matrix.dataset }}`;
+            const body = `
+            ## Difference Detected Between \`Production\` and \`Staging\` in the following dataset(s)
             ## Dataset(s)
-            ```yml
+            \`\`\`yml
             - ${{ matrix.dataset }}
-            ```
+            \`\`\`
             ## Next Steps: 
-            If you have manually checked above files and they seem to be ok, comment `[publish]` under this issue. 
+            If you have manually checked above files and they seem to be ok, comment \`[publish]\` under this issue. 
             This would allow github actions to move staging files to production. 
             Feel free to close this issue once it's all complete. Thanks!
+            `;
+            github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              assignees: ["nnxka"],
+              labels: ['publish']
+            });
