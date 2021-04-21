@@ -25,6 +25,6 @@ If a change is detected between the datasets in the `staging` and `production` f
 If the files pass your review, comment [publish] under this issue.
 ![Screen Shot 2021-04-21 at 10 35 49 AM](https://user-images.githubusercontent.com/5611960/115571816-5b40e480-a28d-11eb-8062-c0e36babf295.png)
 
-This triggers a GitHub Action to move the staging files to production.
+This triggers a GitHub Action to move the staging files to production.  Then, close the issue.
 
 Staging applications point to datasets in the `staging` folder, which are synced with the general Carto instance, while production applcations point to datasets in the `production` folder, which are synced with the Planning Labs Carto instance.
