@@ -28,5 +28,6 @@ Review the files in the `staging` environment. If the files pass your review, co
 The comment triggers a GitHub Action to move the staging files to production.  Then, close the issue.
 
 Staging applications point to datasets in the `staging` folder, which are synced with the general Carto instance, while production applcations point to datasets in the `production` folder, which are synced with the Planning Labs Carto instance.  Carto syncs are scheduled to run daily; therefore, it may take up to 24 hours for a dataset that is in the `production` folder to be synced with Carto and go live in the production application.  To make sure that a dataset is reflected in the application right after being updated you can trigger a manual sync in Carto, by clicking on the dataset and clicking "Sync now."
+
 ![Screen Shot 2021-04-21 at 1 38 48 PM](https://user-images.githubusercontent.com/5611960/115597267-15911580-a2a7-11eb-9ae7-48d58be096fb.png)
 
