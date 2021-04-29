@@ -11,6 +11,9 @@ jobs:
       contains(github.event.comment.body, '[publish]') && 
       (
         github.event.comment.user.login == 'nnxka'||
+        github.event.comment.user.login == 'godfreyyeung'||
+        github.event.comment.user.login == 'allthesignals'||
+        github.event.comment.user.login == 'rtblair'||
         github.event.comment.author_association == 'MEMBER'
       )
     env:
