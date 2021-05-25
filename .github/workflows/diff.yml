@@ -48,17 +48,27 @@ jobs:
       matrix: 
         dataset: ${{ fromJSON(needs.diff.outputs.matrix) }}
     steps:            
-       - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
          
-       - name: Install Dependencies
-         run: ./run.sh install
+      - name: Install Dependencies
+        run: ./run.sh install
        
-       - name: Random Sleep
-         run:  sleep $[ ( $RANDOM % 10 )  + 1 ]s
+      - name: Random Sleep
+        run:  sleep $[ ( $RANDOM % 10 )  + 1 ]s
+
+      - uses: lee-dohm/select-matching-issues@v1.2.0
+        name: Close old issues for a given dataset
+        id: oldissues
+        with: 
+          query: 'label:${{ matrix.dataset }}'
+          token: ${{ github.token }}
+
+      - name: Close found issues
+        run: cat ${{ steps.oldissues.outputs.path }} | xargs gh issue close
          
-       - uses: actions/github-script@v3
-         name: Create Issue to Publish
-         with: 
+      - uses: actions/github-script@v3
+        name: Create Issue to Publish
+        with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const title = `[publish] ${{ matrix.dataset }}`;
@@ -79,5 +89,5 @@ jobs:
               title: title,
               body: body,
               assignees: ["nnxka"],
-              labels: ['publish']
+              labels: ['publish', ${{ matrix.dataset }}]
             });
