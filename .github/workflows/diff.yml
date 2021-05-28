@@ -2,7 +2,7 @@ name: Production Diff Staging
 on:
   push:
     branches:
-      - 
+      - patch-open-issue
   workflow_dispatch:
   schedule:
     - cron: "0 0 */15 * *"
@@ -64,6 +64,8 @@ jobs:
          with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const metadata = require('metadata.json');
+            const category = metadata.filter(meta => meta.name === '${{ matrix.dataset }}')[0].category
             const title = `[publish] ${{ matrix.dataset }}`;
             const body = `
             ## Difference Detected Between \`Production\` and \`Staging\` in the following dataset(s)
@@ -93,6 +95,6 @@ jobs:
                 title: title,
                 body: body,
                 assignees: ["nnxka"],
-                labels: ['publish']
+                labels: ['staging', category]
               });
             }

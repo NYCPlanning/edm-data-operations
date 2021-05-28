@@ -1,145 +1,114 @@
 [
     {
-        "name": "commercial_overlays",
-        "product": [
-            "streets",
-            "zola"
-        ],
-        "info": {
-            "description": "DCP Commericial Overlay Districts",
-            "de_name": "dcp_commercialoverlay"
-        }
+        "name": "dcp_commercial_overlays",
+        "category": "Zoning"
     },
     {
-        "name": "condo",
-        "product": [
-            "streets",
-            "zola"
-        ],
-        "info": {
-            "de_name": "dof_condo"
-        }
+        "name": "dcp_limited_height_districts",
+        "category": "Zoning"
     },
     {
-        "name": "dcm",
-        "product": []
+        "name": "dcp_sidewalk_cafes",
+        "category": "Zoning"
     },
     {
-        "name": "dcm_arterialsmajorstreets",
-        "product": []
+        "name": "dcp_special_purpose_districts",
+        "category": "Zoning"
     },
     {
-        "name": "dcm_citymapalterations",
-        "product": []
+        "name": "dcp_special_purpose_subdistricts",
+        "category": "Zoning"
     },
     {
-        "name": "dcm_streetcenterline",
-        "product": []
+        "name": "dcp_zoning_districts",
+        "category": "Zoning"
     },
     {
-        "name": "dcm_streetnamechanges_areas",
-        "product": []
+        "name": "dcp_zoning_map_amendments",
+        "category": "Zoning"
     },
     {
-        "name": "dcm_streetnamechanges_lines",
-        "product": []
+        "name": "dcp_dcm",
+        "category": "DCM"
     },
     {
-        "name": "dcm_streetnamechanges_points",
-        "product": []
+        "name": "dcp_dcm_arterials_major_streets",
+        "category": "DCM"
     },
     {
-        "name": "dtm_block_centroids",
-        "product": []
+        "name": "dcp_dcm_city_map_alterations",
+        "category": "DCM"
     },
     {
-        "name": "e_designations",
-        "product": [
-            "zola"
-        ],
-        "info": {
-            "de_name": "dcp_edesignation"
-        }
+        "name": "dcp_dcm_street_centerline",
+        "category": "DCM"
     },
     {
-        "name": "facilities",
-        "product": [
-            "streets"
-        ],
-        "info": {
-            "de_name": "dcp_facilities"
-        }
+        "name": "dcp_dcm_street_name_changes_areas",
+        "category": "DCM"
     },
     {
-        "name": "limited_height_districts",
-        "product": [
-            "zola"
-        ]
+        "name": "dcp_dcm_street_name_changes_lines",
+        "category": "DCM"
     },
     {
-        "name": "mandatory_inclusionary_housing",
-        "product": [
-            "zola",
-            "streets"
-        ],
-        "info": {
-            "de_name": "dcp_mih"
-        }
+        "name": "dcp_dcm_street_name_changes_points",
+        "category": "DCM"
     },
     {
-        "name": "pops",
-        "product": [],
-        "info": {
-            "de_name": "dcp_pops"
-        }
+        "name": "dcp_borough_boundary",
+        "category": "Districts"
     },
     {
-        "name": "dcm_streetnamechanges_lines",
-        "product": []
+        "name": "dcp_census_tracts_2010",
+        "category": "Districts"
     },
     {
-        "name": "sidewalk_cafes",
-        "product": [
-            "zola"
-        ]
+        "name": "dcp_city_council_districts",
+        "category": "Districts"
     },
     {
-        "name": "special_purpose_districts",
-        "product": [
-            "zola"
-        ],
-        "info": {
-            "de_name": "dcp_specialpurpose"
-        }
+        "name": "dcp_community_districts",
+        "category": "Districts"
     },
     {
-        "name": "special_purpose_subdistricts",
-        "product": [
-            "zola"
-        ],
-        "info": {
-            "de_name": "dcp_specialpurposesubdistricts"
-        }
+        "name": "dcp_congressional_districts",
+        "category": "Districts"
     },
     {
-        "name": "tax_lot_polygon",
-        "product": [],
-        "info": {
-            "de_name": "dof_dtm"
-        }
+        "name": "dcp_nta",
+        "category": "Districts"
     },
     {
-        "name": "zoning_districts",
-        "product": [],
-        "info": {
-            "de_name": "dcp_zoningdistricts"
-        }
+        "name": "dcp_puma",
+        "category": "Districts"
     },
     {
-        "name": "zoning_map_amendments",
-        "product": [],
-        "info": {
-            "de_name": "dcp_zoningmapamendments"
-        }
+        "name": "dcp_state_assembly_districts",
+        "category": "Districts"
+    },
+    {
+        "name": "dcp_business_improvement_districts",
+        "category": "Other"
+    },
+    {
+        "name": "dcp_e_designations",
+        "category": "Other"
+    },
+    {
+        "name": "dcp_mandatory_inclusionary_housing",
+        "category": "Other"
+    },
+    {
+        "name": "lpc_individual_and",
+        "category": "LPC"
+    },
+    {
+        "name": "lpc_historic_districts",
+        "category": "LPC"
+    },
+    {
+        "name": "lpc_scenic_landmarks",
+        "category": "LPC"
     }
 ]
