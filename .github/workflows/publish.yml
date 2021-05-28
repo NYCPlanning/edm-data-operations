@@ -13,44 +13,44 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
     steps:
-      - run: echo "${{ toJSON(github.event.issue.label.*.name) }}"
+      - run: echo "${{ toJSON(github.event.issue) }}"
       
-      - uses: actions/checkout@v2
+#       - uses: actions/checkout@v2
         
-      - name: Install Dependencies
-        run: ./run.sh install
+#       - name: Install Dependencies
+#         run: ./run.sh install
       
-      - name: Parse dataset names
-        shell: python
-        id: parsing
-        run: |
-          import os
+#       - name: Parse dataset names
+#         shell: python
+#         id: parsing
+#         run: |
+#           import os
           
-          body = """${{ github.event.issue.body }}"""
-          splited = body.split('\n')
-          start = splited.index("```yml")+1
-          end = splited.index("```")
-          datasets=' '.join([i[2:] for i in splited[start:end]])
-          os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
+#           body = """${{ github.event.issue.body }}"""
+#           splited = body.split('\n')
+#           start = splited.index("```yml")+1
+#           end = splited.index("```")
+#           datasets=' '.join([i[2:] for i in splited[start:end]])
+#           os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
                   
-      - name: test output
-        run: echo "${{ steps.parsing.outputs.datasets }}"
+#       - name: test output
+#         run: echo "${{ steps.parsing.outputs.datasets }}"
           
-      - name: Run recipe
-        run: |
-          for i in ${{ steps.parsing.outputs.datasets }}
-          do
-            ./run.sh publish $i
-          done
+#       - name: Run recipe
+#         run: |
+#           for i in ${{ steps.parsing.outputs.datasets }}
+#           do
+#             ./run.sh publish $i
+#           done
                 
-      - name: Success Message
-        if: success()
-        uses:  peter-evans/close-issue@v1
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          comment: |
-            ## Publish Complete!
+#       - name: Success Message
+#         if: success()
+#         uses:  peter-evans/close-issue@v1
+#         with:
+#           issue-number: ${{ github.event.issue.number }}
+#           comment: |
+#             ## Publish Complete!
             
-            ${{ steps.parsing.outputs.datasets }}
+#             ${{ steps.parsing.outputs.datasets }}
             
-            *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
+#             *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
