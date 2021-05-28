@@ -82,7 +82,7 @@ jobs:
               repo: context.repo.repo,
               state: 'open'
             });
-            const filtered = issues.data.filter(issue => issue.title === 'hi hellow')
+            const filtered = issues.data.filter(issue => issue.title === title)
             
             if (filtered.length > 0) {
               console.log('Issue Already Exists')
