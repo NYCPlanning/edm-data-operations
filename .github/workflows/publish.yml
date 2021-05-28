@@ -6,51 +6,59 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-20.04
-#     if: contains(github.event.issue.label.*.name, 'publish')
+    if: >- 
+      ( 
+        contains(github.event.issue.title, '[publish]') && 
+        contains(github.event.comment.body, '[publish]') && (
+          github.event.comment.user.login == 'nnxka'||
+          github.event.comment.user.login == 'godfreyyeung'||
+          github.event.comment.user.login == 'allthesignals'||
+          github.event.comment.user.login == 'rtblair'||
+          github.event.comment.author_association == 'MEMBER'
+      )) || 
+      contains(github.event.issue.labels.*.name, 'publish')
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
-    steps:
-      - run: echo "${{ toJSON(github.event.issue) }}"
-      
-#       - uses: actions/checkout@v2
+    steps:      
+      - uses: actions/checkout@v2
         
-#       - name: Install Dependencies
-#         run: ./run.sh install
+      - name: Install Dependencies
+        run: ./run.sh install
       
-#       - name: Parse dataset names
-#         shell: python
-#         id: parsing
-#         run: |
-#           import os
+      - name: Parse dataset names
+        shell: python
+        id: parsing
+        run: |
+          import os
           
-#           body = """${{ github.event.issue.body }}"""
-#           splited = body.split('\n')
-#           start = splited.index("```yml")+1
-#           end = splited.index("```")
-#           datasets=' '.join([i[2:] for i in splited[start:end]])
-#           os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
+          body = """${{ github.event.issue.body }}"""
+          splited = body.split('\n')
+          start = splited.index("```yml")+1
+          end = splited.index("```")
+          datasets=' '.join([i[2:] for i in splited[start:end]])
+          os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
                   
-#       - name: test output
-#         run: echo "${{ steps.parsing.outputs.datasets }}"
+      - name: test output
+        run: echo "${{ steps.parsing.outputs.datasets }}"
           
-#       - name: Run recipe
-#         run: |
-#           for i in ${{ steps.parsing.outputs.datasets }}
-#           do
-#             ./run.sh publish $i
-#           done
+      - name: Run recipe
+        run: |
+          for i in ${{ steps.parsing.outputs.datasets }}
+          do
+            ./run.sh publish $i
+          done
                 
-#       - name: Success Message
-#         if: success()
-#         uses:  peter-evans/close-issue@v1
-#         with:
-#           issue-number: ${{ github.event.issue.number }}
-#           comment: |
-#             ## Publish Complete!
+      - name: Success Message
+        if: success()
+        uses:  peter-evans/close-issue@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          comment: |
+            ## Publish Complete!
             
-#             ${{ steps.parsing.outputs.datasets }}
+            ${{ steps.parsing.outputs.datasets }}
             
-#             *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
+            *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
