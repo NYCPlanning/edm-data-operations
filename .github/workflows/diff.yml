@@ -70,10 +70,11 @@ jobs:
          with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            let category;
             if ('${{ steps.category.outputs.category }}' === '') {
-              const category = '🚕 Other'
+              category = '🚕 Other'
             } else {
-              const category = '${{ steps.category.outputs.category }}'
+              category = '${{ steps.category.outputs.category }}'
             }
             const title = `[publish] ${{ matrix.dataset }}`;
             const body = `
