@@ -1,114 +1,114 @@
 [
     {
         "name": "dcp_commercial_overlays",
-        "category": "Zoning"
+        "category": "🏗️ Zoning"
     },
     {
         "name": "dcp_limited_height_districts",
-        "category": "Zoning"
+        "category": "🏗️ Zoning"
     },
     {
         "name": "dcp_sidewalk_cafes",
-        "category": "Zoning"
+        "category": "🏗️ Zoning"
     },
     {
         "name": "dcp_special_purpose_districts",
-        "category": "Zoning"
+        "category": "🏗️ Zoning"
     },
     {
         "name": "dcp_special_purpose_subdistricts",
-        "category": "Zoning"
+        "category": "🏗️ Zoning"
     },
     {
         "name": "dcp_zoning_districts",
-        "category": "Zoning"
+        "category": "🏗️ Zoning"
     },
     {
         "name": "dcp_zoning_map_amendments",
-        "category": "Zoning"
+        "category": "🏗️ Zoning"
     },
     {
         "name": "dcp_dcm",
-        "category": "DCM"
+        "category": "🏙️ DCM"
     },
     {
         "name": "dcp_dcm_arterials_major_streets",
-        "category": "DCM"
+        "category": "🏙️ DCM"
     },
     {
         "name": "dcp_dcm_city_map_alterations",
-        "category": "DCM"
+        "category": "🏙️ DCM"
     },
     {
         "name": "dcp_dcm_street_centerline",
-        "category": "DCM"
+        "category": "🏙️ DCM"
     },
     {
         "name": "dcp_dcm_street_name_changes_areas",
-        "category": "DCM"
+        "category": "🏙️ DCM"
     },
     {
         "name": "dcp_dcm_street_name_changes_lines",
-        "category": "DCM"
+        "category": "🏙️ DCM"
     },
     {
         "name": "dcp_dcm_street_name_changes_points",
-        "category": "DCM"
+        "category": "🏙️ DCM"
     },
     {
         "name": "dcp_borough_boundary",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_census_tracts_2010",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_city_council_districts",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_community_districts",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_congressional_districts",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_nta",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_puma",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_state_assembly_districts",
-        "category": "Districts"
+        "category": "🗺️ Districts"
     },
     {
         "name": "dcp_business_improvement_districts",
-        "category": "Other"
+        "category": "🚕 Other"
     },
     {
         "name": "dcp_e_designations",
-        "category": "Other"
+        "category": "🚕 Other"
     },
     {
         "name": "dcp_mandatory_inclusionary_housing",
-        "category": "Other"
+        "category": "🚕 Other"
     },
     {
         "name": "lpc_individual_and",
-        "category": "LPC"
+        "category": "🗽 LPC"
     },
     {
         "name": "lpc_historic_districts",
-        "category": "LPC"
+        "category": "🗽 LPC"
     },
     {
         "name": "lpc_scenic_landmarks",
-        "category": "LPC"
+        "category": "🗽 LPC"
     }
 ]

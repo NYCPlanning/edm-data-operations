@@ -70,8 +70,11 @@ jobs:
          with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const category = '${{ steps.category.outputs.category }}'
-            if (category === '') {const category = 'Other'}
+            if ('${{ steps.category.outputs.category }}' === '') {
+              const category = '🚕 Other'
+            } else {
+              const category = '${{ steps.category.outputs.category }}'
+            }
             const title = `[publish] ${{ matrix.dataset }}`;
             const body = `
             ## Difference Detected Between \`Production\` and \`Staging\` in the following dataset(s)
