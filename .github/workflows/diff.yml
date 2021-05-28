@@ -64,8 +64,17 @@ jobs:
          with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const metadata = require('metadata.json');
-            const category = metadata.filter(meta => meta.name === '${{ matrix.dataset }}')[0].category
+            const fs = require('fs');
+            fs.readFile('metadata.json', (err, data) => {
+                if (err) throw err;
+                const metadata = JSON.parse(data);
+            });
+            const meta = metadata.filter(meta => meta.name === '${{ matrix.dataset }}')
+            if (meta.length > 0) {
+              const category = meta[0].category
+            } else {
+              const category = 'Other'
+            }
             const title = `[publish] ${{ matrix.dataset }}`;
             const body = `
             ## Difference Detected Between \`Production\` and \`Staging\` in the following dataset(s)
