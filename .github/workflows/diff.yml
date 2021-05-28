@@ -65,9 +65,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            fs.readFile('metadata.json', (err, data) => {
+            const metadata = fs.readFile('metadata.json', (err, data) => {
                 if (err) throw err;
-                const metadata = JSON.parse(data);
+                return JSON.parse(data);
             });
             const meta = metadata.filter(meta => meta.name === '${{ matrix.dataset }}')
             if (meta.length > 0) {
