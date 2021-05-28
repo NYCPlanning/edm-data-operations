@@ -64,7 +64,8 @@ jobs:
          with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const metadata = await fetch('./metadata.json').then(res => res.json())
+            const metadata = require('./metadata.json')
+            console.log(metadata)
             const meta = metadata.filter(meta => meta.name === '${{ matrix.dataset }}')
             if (meta.length > 0) {
               const category = meta[0].category
