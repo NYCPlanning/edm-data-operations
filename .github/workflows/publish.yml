@@ -11,15 +11,14 @@ jobs:
     if: >- 
       contains(github.event.issue.title, '[publish]') && 
       (
-        contains(github.event.comment.body, '[publish]') ||
+        (contains(github.event.comment.body, '[publish]') && (
+          github.event.comment.user.login == 'nnxka'||
+          github.event.comment.user.login == 'godfreyyeung'||
+          github.event.comment.user.login == 'allthesignals'||
+          github.event.comment.user.login == 'rtblair'||
+          github.event.comment.author_association == 'MEMBER'
+        )) || 
         contains(github.event.issue.label.*.name, 'publish')
-      ) && 
-      (
-        github.event.comment.user.login == 'nnxka'||
-        github.event.comment.user.login == 'godfreyyeung'||
-        github.event.comment.user.login == 'allthesignals'||
-        github.event.comment.user.login == 'rtblair'||
-        github.event.comment.author_association == 'MEMBER'
       )
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
