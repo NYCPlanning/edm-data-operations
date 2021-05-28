@@ -59,20 +59,19 @@ jobs:
        - name: Random Sleep
          run:  sleep $[ ( $RANDOM % 10 )  + 1 ]s
 
+       - name: Get Category
+         id: category
+         run: |
+          category=$(cat metadata.json |  jq -r '.[] | select( .name | contains("${{ matrix.dataset }}"))' | jq -r '.category')
+          echo "::set-output name=category::$category"
+
        - uses: actions/github-script@v3
          name: Create Issue to Publish (if it doesn't exist)
          with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const metadata = require('./metadata.json')
-            console.log(metadata)
-            const meta = metadata.filter(meta => meta.name === '${{ matrix.dataset }}')
-            if (meta.length > 0) {
-              const category = meta[0].category
-            } else {
-              const category = 'Other'
-            }
-            console.log(category)
+            const category = '${{ steps.category.outputs.category }}'
+            if (category === '') {const category = 'Other'}
             const title = `[publish] ${{ matrix.dataset }}`;
             const body = `
             ## Difference Detected Between \`Production\` and \`Staging\` in the following dataset(s)
