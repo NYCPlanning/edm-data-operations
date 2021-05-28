@@ -1,5 +1,8 @@
 name: Production Diff Staging
 on:
+  push:
+    branches:
+      - 
   workflow_dispatch:
   schedule:
     - cron: "0 0 */15 * *"
@@ -55,9 +58,9 @@ jobs:
        
        - name: Random Sleep
          run:  sleep $[ ( $RANDOM % 10 )  + 1 ]s
-         
+
        - uses: actions/github-script@v3
-         name: Create Issue to Publish
+         name: Create Issue to Publish (if it doesn't exist)
          with: 
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -73,11 +76,23 @@ jobs:
             This would allow github actions to move staging files to production. 
             Feel free to close this issue once it's all complete. Thanks!
             `;
-            github.issues.create({
+
+            const issues = await github.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: title,
-              body: body,
-              assignees: ["nnxka"],
-              labels: ['publish']
+              state: 'open'
             });
+            const filtered = issues.data.filter(issue => issue.title === 'hi hellow')
+            
+            if (filtered.length > 0) {
+              console.log('Issue Already Exists')
+            } else {
+              github.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                assignees: ["nnxka"],
+                labels: ['publish']
+              });
+            }
