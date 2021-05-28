@@ -2,13 +2,18 @@ name: Staging -> Production
 on:
   issue_comment:
     types: [created, edited]
+  issues:
+    types: [labeled]
 
 jobs:
   publish:
     runs-on: ubuntu-20.04
     if: >- 
       contains(github.event.issue.title, '[publish]') && 
-      contains(github.event.comment.body, '[publish]') && 
+      (
+        contains(github.event.comment.body, '[publish]') ||
+        contains(github.event.issue.label.*.name, 'publish')
+      ) && 
       (
         github.event.comment.user.login == 'nnxka'||
         github.event.comment.user.login == 'godfreyyeung'||
