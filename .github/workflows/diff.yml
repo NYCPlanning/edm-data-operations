@@ -5,7 +5,7 @@ on:
       - patch-open-issue
   workflow_dispatch:
   schedule:
-    - cron: "0 0 */15 * *"
+    - cron: "0 0 * * *"
 jobs:
   diff:
     runs-on: ubuntu-20.04
