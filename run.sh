@@ -15,8 +15,8 @@ BUCKET=$AWS_S3_BUCKET
 
 # Setup: Download and Install minio
 function install {
-    curl -O https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2020-10-03T02-54-56Z
-    mv mc.RELEASE.2020-10-03T02-54-56Z mc
+    curl -O https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2020-04-19T19-17-53Z
+    mv mc.RELEASE.2020-04-19T19-17-53Z mc
     chmod +x mc
     sudo mv ./mc /usr/bin
     mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
@@ -39,6 +39,7 @@ function publish {
     NAME=$1
     VERSION=${2:-staging}
     STAGING_PATH=spaces/$BUCKET/datasets/$1/$VERSION/
+    echo "$STAGING_PATH"
     PUBLISH_PATH=spaces/$BUCKET/datasets/$1/production/
     printf "\033[0;31m
         publishing  $STAGING_PATH
