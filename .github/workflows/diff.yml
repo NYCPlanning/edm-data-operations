@@ -33,6 +33,7 @@ jobs:
           diff=os.popen('./run.sh diff_list').readlines()
           diff=[d.replace('\n', '') for d in diff]
           diff_json=json.dumps(json.dumps(diff))
+          os.system('''echo "::set-output name=notify::{}"'''.format(str(len(diff))))
           os.system('''echo "::set-output name=matrix::{}"'''.format(diff_json))
           
       - name: Print Matrix
@@ -41,6 +42,7 @@ jobs:
 
   notify:
     runs-on: ubuntu-20.04
+    if: needs.diff.outputs.notify != '0'
     needs: [diff]
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
