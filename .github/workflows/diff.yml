@@ -33,6 +33,8 @@ jobs:
           diff=os.popen('./run.sh diff_list').readlines()
           diff=[d.replace('\n', '') for d in diff]
           diff_json=json.dumps(json.dumps(diff))
+          print(len(diff))
+          print(str(len(diff)))
           os.system('''echo "::set-output name=notify::{}"'''.format(str(len(diff))))
           os.system('''echo "::set-output name=matrix::{}"'''.format(diff_json))
           
