@@ -39,6 +39,17 @@ jobs:
       - name: Print Matrix
         run: |
           echo ${{ steps.diff.outputs.matrix }}
+      
+      - name: test notify
+        run: echo ${{ steps.diff.outputs.notify }}
+      
+      - name: test notify
+        if: steps.diff.outputs.notify != '0'
+        run: echo ${{ steps.diff.outputs.notify }}
+      
+      - name: test notify
+        if: steps.diff.outputs.notify != 0
+        run: echo ${{ steps.diff.outputs.notify }}
 
   notify:
     runs-on: ubuntu-20.04
