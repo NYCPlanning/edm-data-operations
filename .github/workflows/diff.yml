@@ -16,6 +16,7 @@ jobs:
       AWS_S3_BUCKET: edm-publishing
     outputs: 
       matrix: ${{ steps.diff.outputs.matrix }}
+      notify: ${{ steps.diff.outputs.notify }}
     steps:
       - uses: actions/checkout@v2
         
@@ -33,9 +34,15 @@ jobs:
           diff=os.popen('./run.sh diff_list').readlines()
           diff=[d.replace('\n', '') for d in diff]
           diff_json=json.dumps(json.dumps(diff))
+          print(len(diff))
+          print(str(len(diff)))
           os.system('''echo "::set-output name=notify::{}"'''.format(str(len(diff))))
           os.system('''echo "::set-output name=matrix::{}"'''.format(diff_json))
-          
+      
+      - name: notify?
+        run: |
+          echo ${{ steps.diff.outputs.notify }}
+
       - name: Print Matrix
         run: |
           echo ${{ steps.diff.outputs.matrix }}
