@@ -124,7 +124,7 @@ jobs:
                 repo: context.repo.repo,
                 title: title,
                 body: body,
-                assignees: ["nnxka"],
+                assignees: ["ksinghprod"],
                 labels: ['staging', category]
               });
             }
