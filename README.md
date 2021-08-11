@@ -1,5 +1,5 @@
 # edm-data-operations
-A centralized repo to handle data update/publishing between Labs and EDM. Note that we are checking (diffing) daily for any file difference, and all datasets pending updates will have a issue created automatically to facilitate and record the update process
+A centralized repo to handle data update/publishing between Labs and EDM. Note that we are checking (diffing) daily for any file difference, and all datasets pending updates will have a issue created automatically to facilitate and record the update process.
 
 # CLI Instructions
 ```bash
@@ -39,4 +39,11 @@ Staging applications point to datasets in the `staging` folder, which are synced
 
 ![Screen Shot 2021-04-21 at 1 38 48 PM](https://user-images.githubusercontent.com/5611960/115597267-15911580-a2a7-11eb-9ae7-48d58be096fb.png)
 </details>
+
+# Diffing workflow
+We are checking (diffing) daily for any file difference, and all datasets pending updates will have a issue created automatically to facilitate and record the update process; however, if you would like to manually trigger a diffing workflow you can navigate to the `Actions` tab, select [`Production Diff Staging
+`](https://github.com/NYCPlanning/edm-data-operations/actions/workflows/diff.yml), then click "Run Workflow" off of the main branch.
+
+# Review workflow
+You can use [this table](https://nyco365.sharepoint.com/:x:/s/NYCPLANNING/itd/edm/ERpXqPnYBIRDqA67w-sTRuEBwAI_Q1sR4WbEOVnHmnyQrA?e=EGPBIa&CID=4bec41e7-65f1-7f6a-6646-ecf8fe2d3952) to know which applications use which datatables.  You need to make sure that 1) the dataset appears and 2) in some cases (i.e. PLUTO) that it's the latest dataset by spot checking some values.
 
