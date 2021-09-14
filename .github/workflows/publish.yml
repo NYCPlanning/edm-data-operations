@@ -13,8 +13,9 @@ jobs:
           github.event.comment.user.login == 'ksinghprod'||
           github.event.comment.user.login == 'godfreyyeung'||
           github.event.comment.user.login == 'allthesignals'||
-          github.event.comment.user.login == 'rtblair'||
-      )) || 
+          github.event.comment.user.login == 'rtblair'
+        )
+      ) || 
       contains(github.event.issue.labels.*.name, 'publish')
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
