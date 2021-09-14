@@ -14,7 +14,6 @@ jobs:
           github.event.comment.user.login == 'godfreyyeung'||
           github.event.comment.user.login == 'allthesignals'||
           github.event.comment.user.login == 'rtblair'||
-          github.event.comment.author_association == 'MEMBER'
       )) || 
       contains(github.event.issue.labels.*.name, 'publish')
     env:
