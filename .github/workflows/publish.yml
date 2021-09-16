@@ -12,7 +12,7 @@ jobs:
         contains(github.event.comment.body, '[publish]') && (
           github.event.comment.user.login == 'ksinghprod'||
           github.event.comment.user.login == 'godfreyyeung'||
-          github.event.comment.user.login == 'allthesignals'||
+          github.event.comment.user.login == 'dhochbaum-dcp'||
           github.event.comment.user.login == 'rtblair'
         )
       ) || 
