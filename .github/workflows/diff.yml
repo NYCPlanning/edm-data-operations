@@ -124,7 +124,7 @@ jobs:
                 repo: context.repo.repo,
                 title: title,
                 body: body,
-                assignees: ["ksinghprod"],
+                assignees: ["rtblair"],
                 labels: ['staging', category]
               });
             }
