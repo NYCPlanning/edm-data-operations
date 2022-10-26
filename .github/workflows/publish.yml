@@ -10,9 +10,9 @@ jobs:
       ( 
         contains(github.event.issue.title, '[publish]') && 
         contains(github.event.comment.body, '[publish]') && (
-          github.event.comment.user.login == 'ksinghprod'||
           github.event.comment.user.login == 'godfreyyeung'||
           github.event.comment.user.login == 'dhochbaum-dcp'||
+          github.event.comment.user.login == 'jpiacentinidcp'||
           github.event.comment.user.login == 'rtblair'
         )
       ) || 
