@@ -124,7 +124,7 @@ jobs:
                 repo: context.repo.repo,
                 title: title,
                 body: body,
-                assignees: ["rtblair"],
+                assignees: ["rtblair", "jpiacentinidcp", "ileoyu", "OmarOrtiz1"],
                 labels: ['staging', category]
               });
             }
