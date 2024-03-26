@@ -74,6 +74,9 @@
 - name: dcp_mandatory_inclusionary_housing
   category: Other
 
+- name: dep_cats_permits
+  category: Other
+
 - name: lpc_individual_and
   category: LPC
 
