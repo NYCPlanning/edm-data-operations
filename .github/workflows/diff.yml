@@ -36,8 +36,8 @@ jobs:
           diff_json=json.dumps(json.dumps(diff))
           print(len(diff))
           print(str(len(diff)))
-          os.system('''echo "::set-output name=notify::{}"'''.format(str(len(diff))))
-          os.system('''echo "::set-output name=matrix::{}"'''.format(diff_json))
+          os.system('''echo "notify={}" >> $GITHUB_OUTPUT'''.format(str(len(diff))))
+          os.system('''echo "matrix={}" >> $GITHUB_OUTPUT'''.format(diff_json))
       
       - name: notify?
         run: |
@@ -83,7 +83,7 @@ jobs:
          id: category
          run: |
           category=$(cat metadata.json |  jq -r '.[] | select( .name | contains("${{ matrix.dataset }}"))' | jq -r '.category')
-          echo "::set-output name=category::$category"
+          echo "category=$category" >> $GITHUB_OUTPUT
 
        - uses: actions/github-script@v3
          name: Create Issue to Publish (if it doesn't exist)

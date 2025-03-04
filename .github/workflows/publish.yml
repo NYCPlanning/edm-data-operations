@@ -37,7 +37,7 @@ jobs:
           start = splited.index("```yml")+1
           end = splited.index("```")
           datasets=' '.join([i[2:] for i in splited[start:end]])
-          os.system('echo "::set-output name=datasets::{0}"'.format(datasets))
+          os.system('echo "datasets={0}" >> $GITHUB_OUTPUT'.format(datasets))
                   
       - name: test output
         run: echo "${{ steps.parsing.outputs.datasets }}"
