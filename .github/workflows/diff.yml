@@ -1,11 +1,10 @@
 name: Production Diff Staging
+
 on:
-  push:
-    branches:
-      - patch-open-issue
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+  - cron: "0 0 * * *"
+
 jobs:
   diff:
     runs-on: ubuntu-22.04
@@ -14,132 +13,132 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
-    outputs: 
+    outputs:
       matrix: ${{ steps.diff.outputs.matrix }}
       notify: ${{ steps.diff.outputs.notify }}
     steps:
-      - uses: actions/checkout@v4
-        
-      - name: Install Dependencies
-        run: ./run.sh install
-      
-      - name: Compute diff matrix
-        id: diff 
-        shell: python
-        run: |
-          import json
-          import os
-          import os
-          
-          diff=os.popen('./run.sh diff_list').readlines()
-          diff=[d.replace('\n', '') for d in diff]
-          diff_json=json.dumps(json.dumps(diff))
-          print(len(diff))
-          print(str(len(diff)))
-          os.system('''echo "notify={}" >> $GITHUB_OUTPUT'''.format(str(len(diff))))
-          os.system('''echo "matrix={}" >> $GITHUB_OUTPUT'''.format(diff_json))
-      
-      - name: notify?
-        run: |
-          echo ${{ steps.diff.outputs.notify }}
+    - uses: actions/checkout@v4
 
-      - name: Print Matrix
-        run: |
-          echo ${{ steps.diff.outputs.matrix }}
-      
-      - name: test notify
-        run: echo ${{ steps.diff.outputs.notify }}
-      
-      - name: test notify
-        if: steps.diff.outputs.notify != '0'
-        run: echo ${{ steps.diff.outputs.notify }}
-      
-      - name: test notify
-        if: steps.diff.outputs.notify != 0
-        run: echo ${{ steps.diff.outputs.notify }}
+    - name: Install Dependencies
+      run: ./run.sh install
+
+    - name: Compute diff matrix
+      id: diff
+      shell: python
+      run: |
+        import json
+        import os
+        import os
+
+        diff=os.popen('./run.sh diff_list').readlines()
+        diff=[d.replace('\n', '') for d in diff]
+        diff_json=json.dumps(json.dumps(diff))
+        print(len(diff))
+        print(str(len(diff)))
+        os.system('''echo "notify={}" >> $GITHUB_OUTPUT'''.format(str(len(diff))))
+        os.system('''echo "matrix={}" >> $GITHUB_OUTPUT'''.format(diff_json))
+
+    - name: notify?
+      run: |
+        echo ${{ steps.diff.outputs.notify }}
+
+    - name: Print Matrix
+      run: |
+        echo ${{ steps.diff.outputs.matrix }}
+
+    - name: test notify
+      run: echo ${{ steps.diff.outputs.notify }}
+
+    - name: test notify
+      if: steps.diff.outputs.notify != '0'
+      run: echo ${{ steps.diff.outputs.notify }}
+
+    - name: test notify
+      if: steps.diff.outputs.notify != 0
+      run: echo ${{ steps.diff.outputs.notify }}
 
   notify:
     runs-on: ubuntu-22.04
     if: needs.diff.outputs.notify != '0'
-    needs: [diff]
+    needs: [ diff ]
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
     strategy:
-      matrix: 
+      matrix:
         dataset: ${{ fromJSON(needs.diff.outputs.matrix) }}
-    steps:            
-       - uses: actions/checkout@v4
-         
-       - name: Install Dependencies
-         run: ./run.sh install
-       
-       - name: Random Sleep
-         run:  sleep $[ ( $RANDOM % 10 )  + 1 ]s
+    steps:
+    - uses: actions/checkout@v4
 
-       - name: Get Category
-         id: category
-         run: |
-          category=$(cat metadata.json |  jq -r '.[] | select( .name | contains("${{ matrix.dataset }}"))' | jq -r '.category')
-          echo "category=$category" >> $GITHUB_OUTPUT
+    - name: Install Dependencies
+      run: ./run.sh install
 
-       - uses: actions/github-script@v3
-         name: Create Issue to Publish (if it doesn't exist)
-         with: 
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            let category;
-            if ('${{ steps.category.outputs.category }}' === '') {
-              category = '🚕 Other'
-            } else {
-              category = '${{ steps.category.outputs.category }}'
-            }
-            const title = `[publish] ${{ matrix.dataset }}`;
-            const body = `
-            ## Difference Detected Between \`Production\` and \`Staging\` in the following dataset(s)
-            ### Dataset(s)
-            \`\`\`yml
-            - ${{ matrix.dataset }}
-            \`\`\`
-            ### Next Steps
-            If you have manually checked above files and they seem to be ok, add the \'publish\' label to this issue.
+    - name: Random Sleep
+      run: sleep $[ ( $RANDOM % 10 )  + 1 ]s
 
-            This will allow github actions to move staging files to production. 
-            
-            Feel free to close this issue once it's all complete. Thanks!
-            `;
+    - name: Get Category
+      id: category
+      run: |
+        category=$(cat metadata.json |  jq -r '.[] | select( .name | contains("${{ matrix.dataset }}"))' | jq -r '.category')
+        echo "category=$category" >> $GITHUB_OUTPUT
 
-            const issues = await github.issues.listForRepo({
+    - uses: actions/github-script@v3
+      name: Create Issue to Publish (if it doesn't exist)
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          let category;
+          if ('${{ steps.category.outputs.category }}' === '') {
+            category = '🚕 Other'
+          } else {
+            category = '${{ steps.category.outputs.category }}'
+          }
+          const title = `[publish] ${{ matrix.dataset }}`;
+          const body = `
+          ## Difference Detected Between \`Production\` and \`Staging\` in the following dataset(s)
+          ### Dataset(s)
+          \`\`\`yml
+          - ${{ matrix.dataset }}
+          \`\`\`
+          ### Next Steps
+          If you have manually checked above files and they seem to be ok, add the \'publish\' label to this issue.
+
+          This will allow github actions to move staging files to production. 
+
+          Feel free to close this issue once it's all complete. Thanks!
+          `;
+
+          const issues = await github.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open'
+          });
+          const filtered = issues.data.filter(issue => issue.title === title)
+
+          if (filtered.length > 0) {
+            console.log('Issue Already Exists')
+          } else {
+            github.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              state: 'open'
+              title: title,
+              body: body,
+              assignees: ["ileoyu", "OmarOrtiz1"],
+              labels: ['staging', category]
             });
-            const filtered = issues.data.filter(issue => issue.title === title)
-            
-            if (filtered.length > 0) {
-              console.log('Issue Already Exists')
-            } else {
-              github.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: title,
-                body: body,
-                assignees: ["ileoyu", "OmarOrtiz1"],
-                labels: ['staging', category]
-              });
-            }
+          }
 
   keepalive-job:
     name: Keepalive Workflow
     if: ${{ always() }}
-    needs: [ notify ] 
+    needs: [ notify ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: gautamkrishnar/keepalive-workflow@v2
-        with:
-          use_api: false
+    - uses: actions/checkout@v4
+    - uses: gautamkrishnar/keepalive-workflow@v2
+      with:
+        use_api: false
