@@ -69,6 +69,7 @@ jobs:
     strategy:
       matrix:
         dataset: ${{ fromJSON(needs.diff.outputs.matrix) }}
+      fail-fast: false
     steps:
     - uses: actions/checkout@v4
 
