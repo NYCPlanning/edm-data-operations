@@ -81,7 +81,7 @@ jobs:
     - name: Get Category
       id: category
       run: |
-        category=$(cat metadata.json |  jq -r '.[] | select( .name | contains("${{ matrix.dataset }}"))' | jq -r '.category')
+        category=$(cat metadata.json |  jq -r '.[] | select( .name=="${{ matrix.dataset }}")' | jq -r '.category')
         echo "category=$category" >> $GITHUB_OUTPUT
 
     - uses: actions/github-script@v3
