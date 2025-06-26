@@ -45,7 +45,7 @@ function publish {
         publishing  $STAGING_PATH
         to          $PUBLISH_PATH
     \033[0;31m"
-    mc cp --recursive $STAGING_PATH $PUBLISH_PATH
+    mc cp --attr x-amz-acl=public-read --recursive $STAGING_PATH $PUBLISH_PATH
 }
 
 function show {
