@@ -1,20 +1,10 @@
 name: Staging -> Production
 
-on:
-  issues:
-    types: [ labeled ]
+on: workflow_dispatch
 
 jobs:
   publish:
     runs-on: ubuntu-22.04
-    if: >-
-      ( 
-        contains(github.event.issue.title, '[publish]') && 
-        contains(github.event.comment.body, '[publish]') && (
-          github.event.comment.user.login == 'dhochbaum-dcp'||
-          github.event.comment.user.login == 'jpiacentinidcp'
-        )
-      ) ||  contains(github.event.issue.labels.*.name, 'publish')
     env:
       AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
@@ -26,29 +16,9 @@ jobs:
     - name: Install Dependencies
       run: ./run.sh install
 
-    - name: Parse dataset names
-      shell: python
-      id: parsing
-      run: |+
-        import os
-
-        body = """${{ github.event.issue.body }}"""
-        splited = body.split('\n')
-        start = splited.index("```yml")+1
-        end = splited.index("```")
-        datasets=' '.join([i[2:] for i in splited[start:end]])
-        os.system('echo "datasets={0}" >> $GITHUB_OUTPUT'.format(datasets))
-                
-    - name: test output
-      run: echo "${{ steps.parsing.outputs.datasets }}"
-
     - name: Run recipe
-      run: |+
-        for i in ${{ steps.parsing.outputs.datasets }}
-        do
-          ./run.sh publish $i
-        done
-            
+      run: ./run.sh publish dcp_address_points
+
     - name: Success Message
       if: success()
       uses: peter-evans/close-issue@v1
