@@ -126,7 +126,7 @@ jobs:
               repo: context.repo.repo,
               title: title,
               body: body,
-              assignees: ["ileoyu", "OmarOrtiz1"],
+              assignees: ["ileoyu", "OmarOrtiz142"],
               labels: ['staging', category]
             });
           }
