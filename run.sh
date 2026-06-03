@@ -13,6 +13,12 @@ function set_env {
 set_env .env
 BUCKET=$AWS_S3_BUCKET
 
+function set_error_traps {
+  # Exit when any command fails
+  set -e
+}
+set_error_traps
+
 # Setup: Download and Install minio
 function install {
     # Use -o to force the downloaded binary filename
