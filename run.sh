@@ -76,21 +76,23 @@ function diff {
     VERSION=${2:-staging}
     STAGING_PATH=spaces/$BUCKET/datasets/$1/$VERSION
     PUBLISH_PATH=spaces/$BUCKET/datasets/$1/production
-    for INFO in $(mc ls --recursive --json $STAGING_PATH)
+    status=false
+    status_verbose='false'
+    while IFS= read -r INFO
     do
         KEY=$(echo $INFO | jq -r '.key')
-        stg_etag=$(mc stat --json $STAGING_PATH/$KEY | jq -r '.etag')            
+        stg_etag=$(mc stat --json $STAGING_PATH/$KEY | jq -r '.etag')
         prod_etag=$(mc stat --json $PUBLISH_PATH/$KEY | jq -r '.etag')
-        if [ $stg_etag != $prod_etag ]
-        then 
+        if [ "$stg_etag" != "$prod_etag" ]
+        then
             status=true
             status_verbose='true'
             break
-        else 
+        else
             status=false
             status_verbose='false'
         fi
-    done
+    done < <(mc ls --recursive --json $STAGING_PATH)
 }
 
 
