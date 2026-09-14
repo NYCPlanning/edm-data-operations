@@ -13,19 +13,27 @@ function set_env {
 set_env .env
 BUCKET=$AWS_S3_BUCKET
 
+# The aws cli refuses to sign a request without a region. Spaces endpoints carry
+# theirs in the hostname, e.g. https://nyc3.digitaloceanspaces.com
+export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-$(echo "$AWS_S3_ENDPOINT" | sed -E 's#^https?://##; s#\..*##')}
+
+function spaces {
+    aws --endpoint-url "$AWS_S3_ENDPOINT" "$@"
+}
+
 function set_error_traps {
   # Exit when any command fails
   set -e
 }
 set_error_traps
 
-# Setup: Download and Install minio
+# Setup: the aws cli is preinstalled on github runners and reads credentials from the environment
 function install {
-    # Use -o to force the downloaded binary filename
-    curl -fL https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2020-04-19T19-17-53Z -o mc
-    chmod +x mc
-    sudo mv ./mc /usr/bin
-    mc config host add spaces $AWS_S3_ENDPOINT $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY --api S3v4
+    if ! command -v aws > /dev/null
+    then
+        printf "aws cli not found: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html\n"
+        exit 1
+    fi
     python -m pip install PyYAML
 }
 
@@ -33,10 +41,10 @@ function delete {
     shift;
     NAME=$1
     VERSION=$2
-    TARGET_PATH=spaces/$BUCKET/datasets/$1/$VERSION/
+    TARGET_PATH=s3://$BUCKET/datasets/$NAME/$VERSION/
     case $VERSION in
         staging|production) printf "\033[0;31mcannot delete $VERSION \n\033[0;31m";;
-        *) mc rm --recursive --force $TARGET_PATH ;;
+        *) spaces s3 rm --recursive $TARGET_PATH ;;
     esac
 }
 
@@ -44,55 +52,51 @@ function publish {
     shift;
     NAME=$1
     VERSION=${2:-staging}
-    STAGING_PATH=spaces/$BUCKET/datasets/$1/$VERSION/
+    STAGING_PATH=s3://$BUCKET/datasets/$NAME/$VERSION/
     echo "$STAGING_PATH"
-    PUBLISH_PATH=spaces/$BUCKET/datasets/$1/production/
+    PUBLISH_PATH=s3://$BUCKET/datasets/$NAME/production/
     printf "\033[0;31m
         publishing  $STAGING_PATH
         to          $PUBLISH_PATH
     \033[0;31m"
-    mc cp --attr x-amz-acl=public-read --recursive $STAGING_PATH $PUBLISH_PATH
+    spaces s3 cp --acl public-read --recursive $STAGING_PATH $PUBLISH_PATH
 }
 
 function show {
     shift;
     case $2 in 
-        --production|-p) mc ls --recursive spaces/$BUCKET/datasets/$1/production;;
-        --staging|-s) mc ls --recursive spaces/$BUCKET/datasets/$1/staging;;
-        *) mc ls spaces/$BUCKET/datasets/$1/
+        --production|-p) spaces s3 ls --recursive s3://$BUCKET/datasets/$1/production/;;
+        --staging|-s) spaces s3 ls --recursive s3://$BUCKET/datasets/$1/staging/;;
+        *) spaces s3 ls s3://$BUCKET/datasets/$1/
     esac
 }
 
 function list {
-    keys=$(mc ls --json spaces/$BUCKET/datasets | jq -r '.key')
-    for key in $keys
-    do echo ${key%"/"}
-    done
+    spaces s3api list-objects-v2 --bucket $BUCKET --prefix datasets/ --delimiter / \
+        | jq -r '.CommonPrefixes[]?.Prefix | ltrimstr("datasets/") | rtrimstr("/")'
+}
+
+# Every object under a prefix as "<key relative to prefix> <etag>", sorted for comm
+function etags {
+    spaces s3api list-objects-v2 --bucket $BUCKET --prefix "$1" \
+        | jq -r --arg prefix "$1" '.Contents[]? | "\(.Key | ltrimstr($prefix)) \(.ETag)"' \
+        | sort
 }
 
 function diff {
     shift;
     NAME=$1
     VERSION=${2:-staging}
-    STAGING_PATH=spaces/$BUCKET/datasets/$1/$VERSION
-    PUBLISH_PATH=spaces/$BUCKET/datasets/$1/production
-    status=false
-    status_verbose='false'
-    while IFS= read -r INFO
-    do
-        KEY=$(echo $INFO | jq -r '.key')
-        stg_etag=$(mc stat --json $STAGING_PATH/$KEY | jq -r '.etag')
-        prod_etag=$(mc stat --json $PUBLISH_PATH/$KEY | jq -r '.etag')
-        if [ "$stg_etag" != "$prod_etag" ]
-        then
-            status=true
-            status_verbose='true'
-            break
-        else
-            status=false
-            status_verbose='false'
-        fi
-    done < <(mc ls --recursive --json $STAGING_PATH)
+    # A dataset is out of sync when a staging object is missing from production or
+    # differs by etag. Extra objects in production don't count.
+    if [ -z "$(comm -23 <(etags datasets/$NAME/$VERSION/) <(etags datasets/$NAME/production/))" ]
+    then
+        status=false
+        status_verbose='false'
+    else
+        status=true
+        status_verbose='true'
+    fi
 }
 
 
@@ -129,7 +133,7 @@ function usage
     echo "./run.sh [install, show, publish, delete, diff]"
     echo
     echo "Commands:"
-    echo "   install:   Install minio and configure host -- spaces"
+    echo "   install:   check for the aws cli and install python dependencies"
     echo "   show:      show available versions and files e.g. ./run.sh show <dataset> --production|--staging"
     echo "   publish:   publish a given dataset from a given candidate version (default candidate is \"staging\")"
     echo "   delete:    deleting a version, by default production and staging cannot be deleted"

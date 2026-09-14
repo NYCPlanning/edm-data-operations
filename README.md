@@ -8,7 +8,7 @@ Usage:
 ./run.sh [install, show, publish, delete, diff, diff_list, list]
 
 Commands:
-   install:   Install minio and configure host -- spaces
+   install:   check for the aws cli and install python dependencies
    show:      show available versions and files e.g. ./run.sh show <dataset> --production|--staging
    publish:   publish a given dataset from a given candidate version (default candidate is "staging")
    delete:    deleting a version, by default production and staging cannot be deleted
