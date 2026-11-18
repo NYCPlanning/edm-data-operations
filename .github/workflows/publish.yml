@@ -29,24 +29,36 @@ jobs:
     - name: Parse dataset names
       shell: python
       id: parsing
+      # The issue body is untrusted: read it from env rather than ${{ }}, and only
+      # pass on names that are safe to word-split into shell commands and S3 paths.
+      env:
+        ISSUE_BODY: ${{ github.event.issue.body }}
       run: |+
         import os
+        import re
 
-        body = """${{ github.event.issue.body }}"""
-        splited = body.split('\n')
+        splited = os.environ["ISSUE_BODY"].split('\n')
         start = splited.index("```yml")+1
         end = splited.index("```")
-        datasets=' '.join([i[2:] for i in splited[start:end]])
-        os.system('echo "datasets={0}" >> $GITHUB_OUTPUT'.format(datasets))
-                
+        datasets = [i[2:] for i in splited[start:end]]
+        invalid = [d for d in datasets if not re.fullmatch(r"[a-z0-9_]+", d)]
+        if invalid:
+            raise SystemExit(f"invalid dataset names: {invalid}")
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"datasets={' '.join(datasets)}\n")
+
     - name: test output
-      run: echo "${{ steps.parsing.outputs.datasets }}"
+      env:
+        DATASETS: ${{ steps.parsing.outputs.datasets }}
+      run: echo "$DATASETS"
 
     - name: Run recipe
+      env:
+        DATASETS: ${{ steps.parsing.outputs.datasets }}
       run: |+
-        for i in ${{ steps.parsing.outputs.datasets }}
+        for i in $DATASETS
         do
-          ./run.sh publish $i
+          ./run.sh publish "$i"
         done
             
     - name: Success Message
