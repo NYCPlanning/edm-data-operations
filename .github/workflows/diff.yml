@@ -13,9 +13,6 @@ jobs:
   diff:
     runs-on: ubuntu-22.04
     env:
-      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
     outputs:
       matrix: ${{ steps.diff.outputs.matrix }}
@@ -29,6 +26,11 @@ jobs:
     - name: Compute diff matrix
       id: diff
       shell: python
+      # Only this step talks to Spaces, so it's the only one that gets the keys.
+      env:
+        AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       run: |
         import json
         import os
@@ -67,9 +69,6 @@ jobs:
     if: needs.diff.outputs.notify != '0'
     needs: [ diff ]
     env:
-      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
     strategy:
       matrix:
