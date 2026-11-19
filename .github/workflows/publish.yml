@@ -20,10 +20,9 @@ jobs:
         )
       ) ||  contains(github.event.issue.labels.*.name, 'publish')
     env:
-      AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       AWS_S3_BUCKET: edm-publishing
+    outputs:
+      datasets: ${{ steps.parsing.outputs.datasets }}
     steps:
     - uses: actions/checkout@v4
 
@@ -59,20 +58,27 @@ jobs:
     - name: Run recipe
       env:
         DATASETS: ${{ steps.parsing.outputs.datasets }}
+        AWS_S3_ENDPOINT: ${{ secrets.DO_S3_ENDPOINT }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.DO_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.DO_SECRET_ACCESS_KEY }}
       run: |+
         for i in $DATASETS
         do
           ./run.sh publish "$i"
         done
-            
+
+  # A separate job so the third-party action never runs where the Spaces keys exist.
+  close-issue:
+    needs: publish
+    runs-on: ubuntu-22.04
+    steps:
     - name: Success Message
-      if: success()
       uses: peter-evans/close-issue@v1
       with:
         issue-number: ${{ github.event.issue.number }}
         comment: |
           ## Publish Complete!
 
-          ${{ steps.parsing.outputs.datasets }}
+          ${{ needs.publish.outputs.datasets }}
 
           *Published By: @${{ github.actor }}* for more details, check [here](https://github.com/NYCPlanning/edm-data-operations/actions/runs/${{ github.run_id }})
